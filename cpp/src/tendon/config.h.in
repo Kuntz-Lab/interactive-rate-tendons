@@ -1,0 +1,30 @@
+/**
+ * Defines macro variables populated through CMake's configure_file() command.
+ *
+ * The configured file will be at <build-dir>/include/tendon/config.h and
+ * installed normally alongside the rest of the header files.
+ *
+ * This file was first created to allow for the use of the 3rdparty library
+ * libros2qt with qt_executor.h.  That file has some different logic in its
+ * header file based on the version of ROS2's rclcpp library and has been
+ * modified to work with the TENDON_RCLCPP_VERSION_MAJOR macro, if present.
+ *
+ * Other variables may be added as deemed necessary.
+ */
+
+#ifndef TENDON_CONFIG_H
+#define TENDON_CONFIG_H
+
+// this package's version number
+#define TENDON_VERSION              "${PROJECT_VERSION}"
+#define TENDON_VERSION_MAJOR        ${PROJECT_VERSION_MAJOR}
+#define TENDON_VERSION_MINOR        ${PROJECT_VERSION_MINOR}
+#define TENDON_VERSION_PATCH        ${PROJECT_VERSION_PATCH}
+
+// ros2's rclcpp does not provide version macros, so handle it in CMake
+#define TENDON_RCLCPP_VERSION       "${rclcpp_VERSION}"
+#define TENDON_RCLCPP_VERSION_MAJOR ${rclcpp_VERSION_MAJOR}
+#define TENDON_RCLCPP_VERSION_MINOR ${rclcpp_VERSION_MINOR}
+#define TENDON_RCLCPP_VERSION_PATCH ${rclcpp_VERSION_PATCH}
+
+#endif // TENDON_CONFIG_H
