@@ -8,16 +8,9 @@
 #include <collision/CapsuleSequence.h>
 #include <collision/Mesh.h>
 #include <collision/VoxelOctree.h>
+#include <collision/fcl_types.h>
 
 #include <memory>
-
-
-// forward declarations
-
-namespace fcl {
-  class BroadPhaseCollisionManager;
-  class CollisionObject;
-} // end of namespace fcl
 
 
 namespace collision {
@@ -34,22 +27,22 @@ bool collides_self(const CapsuleSequence &seq);
 // ==================
 
 // FCL
-bool collides(fcl::CollisionObject* a,
-              fcl::CollisionObject* b);
-bool collides(std::shared_ptr<fcl::CollisionObject> a,
-              std::shared_ptr<fcl::CollisionObject> b);
-bool collides(fcl::BroadPhaseCollisionManager* manager,
-              fcl::CollisionObject* obj);
-bool collides(std::shared_ptr<fcl::BroadPhaseCollisionManager> manager,
-              std::shared_ptr<fcl::CollisionObject> obj);
-bool collides(fcl::CollisionObject* obj,
-              fcl::BroadPhaseCollisionManager* manager);
-bool collides(std::shared_ptr<fcl::CollisionObject> obj,
-              std::shared_ptr<fcl::BroadPhaseCollisionManager> manager);
-bool collides(fcl::BroadPhaseCollisionManager* a,
-              fcl::BroadPhaseCollisionManager* b);
-bool collides(std::shared_ptr<fcl::BroadPhaseCollisionManager> a,
-              std::shared_ptr<fcl::BroadPhaseCollisionManager> b);
+bool collides(::collision::fcl::CollisionObject* a,
+              ::collision::fcl::CollisionObject* b);
+bool collides(std::shared_ptr<::collision::fcl::CollisionObject> a,
+              std::shared_ptr<::collision::fcl::CollisionObject> b);
+bool collides(::collision::fcl::BroadPhaseCollisionManager* manager,
+              ::collision::fcl::CollisionObject* obj);
+bool collides(std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> manager,
+              std::shared_ptr<::collision::fcl::CollisionObject> obj);
+bool collides(::collision::fcl::CollisionObject* obj,
+              ::collision::fcl::BroadPhaseCollisionManager* manager);
+bool collides(std::shared_ptr<::collision::fcl::CollisionObject> obj,
+              std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> manager);
+bool collides(::collision::fcl::BroadPhaseCollisionManager* a,
+              ::collision::fcl::BroadPhaseCollisionManager* b);
+bool collides(std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> a,
+              std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> b);
 
 // Point
 inline bool collides(const Point &a, const Point &b);

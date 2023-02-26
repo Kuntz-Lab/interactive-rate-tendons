@@ -1,8 +1,7 @@
 #include "collision/Capsule.h"
+#include <collision/fcl_types.h>
 #include <cpptoml/toml_conversions.h>
 #include <util/eigen_ops.h>
-
-#include <fcl/shape/geometric_shapes.h>
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -43,24 +42,25 @@ Capsule Capsule::from_toml(std::shared_ptr<cpptoml::table> tbl) {
   return {cpptoml::to_point(a), cpptoml::to_point(b), r->get()};
 }
 
-std::pair<std::shared_ptr<fcl::Capsule>, fcl::Transform3f>
+std::pair<std::shared_ptr<::collision::fcl::Capsule>, ::collision::fcl::Transform>
 Capsule::to_fcl_model() const
 {
   auto direction = this->b - this->a;
   auto center = this->a + (direction / 2.0);
   auto length = direction.norm();
-  auto capsule = std::make_shared<fcl::Capsule>(this->r, length);
+  auto capsule = std::make_shared<::collision::fcl::Capsule>(this->r, length);
   auto e_quat = util::quat_from_zaxis(direction);
-  fcl::Transform3f transform(
-      fcl::Quaternion3f(e_quat.w(), e_quat.x(), e_quat.y(), e_quat.z()),
-      fcl::Vec3f(center[0], center[1], center[2])
+  auto transform = ::collision::fcl::mktransform(
+  //::collision::fcl::Transform transform(
+      ::collision::fcl::Quaternion(e_quat.w(), e_quat.x(), e_quat.y(), e_quat.z()),
+      ::collision::fcl::Vertex(center[0], center[1], center[2])
       );
   return {capsule, transform};
 }
 
-std::shared_ptr<fcl::CollisionObject> Capsule::to_fcl_object() const {
+std::shared_ptr<::collision::fcl::CollisionObject> Capsule::to_fcl_object() const {
   auto [fcl_capsule, transform] = this->to_fcl_model();
-  return std::make_shared<fcl::CollisionObject>(fcl_capsule, transform);
+  return std::make_shared<::collision::fcl::CollisionObject>(fcl_capsule, transform);
 }
 
 } // end of namespace collision

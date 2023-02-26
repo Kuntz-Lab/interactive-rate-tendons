@@ -1,12 +1,13 @@
 #include "submodule_collision.h"
 
-#include <collision/collision.h>
 #include <collision/Capsule.h>
 #include <collision/CapsuleSequence.h>
 #include <collision/Mesh.h>
 #include <collision/OctomapWrap.h>
 #include <collision/Sphere.h>
 #include <collision/VoxelOctree.h>
+#include <collision/collision.h>
+#include <collision/fcl_types.h>
 #include <cpptoml/toml_conversions.h>
 #include <util/json_io.h>
 #include <util/macros.h>
@@ -248,6 +249,7 @@ void def_class_Mesh(py::module &m) {
         })
     ;
 
+#if FCL_MINOR_VERSION == 5
   // Vertex Class
   // Note: this doesn't have all implemented methods, but this is enough
   py::class_<Vert>(m, "Vertex", "Point in space")
@@ -265,8 +267,9 @@ void def_class_Mesh(py::module &m) {
 
     // python-specific added methods
     .def("__getitem__",
-        py::overload_cast<size_t>(
-          &Vert::operator[], py::const_),
+        [](const Vert &v, size_t i) -> ::collision::fcl::FloatType {
+          return v[i];
+        },
         py::arg("i"),
         "get this dimensional value")
     .def("__setitem__",
@@ -284,6 +287,14 @@ void def_class_Mesh(py::module &m) {
         })
     .def("__eq__", &Vert::operator==)
     ;
+#else
+  m.def("Vertex", [](double x, double y, double z) { return Vert{x, y, z}; },
+        py::arg("x") = 0.0,
+        py::arg("y") = 0.0,
+        py::arg("z") = 0.0,
+        "Create a vertex type (as a 3-dim numpy array)"
+    );
+#endif // FCL_VERSION_MINOR == 5
 
   // Finally, the Mesh class
   py::class_<Mesh>(m, "Mesh")

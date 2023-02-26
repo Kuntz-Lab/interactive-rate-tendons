@@ -3,8 +3,7 @@
 
 #include <collision/Point.h>
 #include <collision/collision_primitives.h> // for interpolate() and closest_t()
-
-#include <fcl/math/transform.h>
+#include <collision/fcl_types.h>
 
 #include <iostream>
 #include <memory>
@@ -12,12 +11,6 @@
 
 namespace cpptoml {
 class table;
-}
-
-namespace fcl {
-class Capsule;
-class Transform3f;
-class CollisionObject;
 }
 
 namespace collision {
@@ -37,10 +30,10 @@ struct Capsule {
   std::shared_ptr<cpptoml::table> to_toml() const;
   static Capsule from_toml(std::shared_ptr<cpptoml::table> table);
 
-  std::pair<std::shared_ptr<fcl::Capsule>, fcl::Transform3f>
+  std::pair<std::shared_ptr<::collision::fcl::Capsule>, ::collision::fcl::Transform>
   to_fcl_model() const;
 
-  std::shared_ptr<fcl::CollisionObject> to_fcl_object() const;
+  std::shared_ptr<::collision::fcl::CollisionObject> to_fcl_object() const;
 };
 
 inline std::ostream& operator<<(std::ostream &out, const Capsule &c) {

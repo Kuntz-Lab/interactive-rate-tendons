@@ -1,8 +1,5 @@
 #include "collision/collision.h"
-
-#include <fcl/collision.h>      // for fcl::collide()
-#include <fcl/collision_data.h> // for fcl::CollisionRe{quest,sult}
-#include <fcl/broadphase/broadphase.h>
+#include <collision/fcl_types.h>
 
 namespace collision {
 
@@ -49,44 +46,46 @@ bool collides_self(const CapsuleSequence &seq) {
 } // end of function collides_self(CapsuleSequence)
 
 struct CollisionData {
-  fcl::CollisionRequest request;
-  fcl::CollisionResult result;
+  ::collision::fcl::CollisionRequest request;
+  ::collision::fcl::CollisionResult result;
 };
 
 
 // used in collides() with BroadPhaseCollisionManager
-bool fclCollisionCallback(fcl::CollisionObject* a,
-                                 fcl::CollisionObject* b,
-                                 void* data)
+bool fclCollisionCallback(::collision::fcl::CollisionObject* a,
+                          ::collision::fcl::CollisionObject* b,
+                          void* data)
 {
   CollisionData* cdata = static_cast<CollisionData*>(data);
-  const fcl::CollisionRequest& request = cdata->request;
-  fcl::CollisionResult& result = cdata->result;
+  const ::collision::fcl::CollisionRequest& request = cdata->request;
+  ::collision::fcl::CollisionResult& result = cdata->result;
 
   if(result.isCollision()) {
     return true;
   }
 
-  fcl::collide(a, b, request, result);
+  ::fcl::collide(a, b, request, result);
 
   return result.isCollision();
 }
 
-bool collides(fcl::CollisionObject* a, fcl::CollisionObject* b) {
-  fcl::CollisionRequest request; // default request
-  fcl::CollisionResult result;
-  fcl::collide(a, b, request, result);
+bool collides(::collision::fcl::CollisionObject* a,
+              ::collision::fcl::CollisionObject* b)
+{
+  ::collision::fcl::CollisionRequest request; // default request
+  ::collision::fcl::CollisionResult result;
+  ::fcl::collide(a, b, request, result);
   return result.isCollision();
 }
 
-bool collides(std::shared_ptr<fcl::CollisionObject> a,
-                     std::shared_ptr<fcl::CollisionObject> b)
+bool collides(std::shared_ptr<::collision::fcl::CollisionObject> a,
+              std::shared_ptr<::collision::fcl::CollisionObject> b)
 {
   return collides(a.get(), b.get());
 }
 
-bool collides(fcl::BroadPhaseCollisionManager* manager,
-                     fcl::CollisionObject* obj)
+bool collides(::collision::fcl::BroadPhaseCollisionManager* manager,
+              ::collision::fcl::CollisionObject* obj)
 {
   // fcl::BroadPhaseDynamicAABBTreeCollisionManager: good collision manager
   CollisionData data;
@@ -94,34 +93,34 @@ bool collides(fcl::BroadPhaseCollisionManager* manager,
   return data.result.isCollision();
 }
 
-bool collides(std::shared_ptr<fcl::BroadPhaseCollisionManager> manager,
-                     std::shared_ptr<fcl::CollisionObject> obj)
+bool collides(std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> manager,
+              std::shared_ptr<::collision::fcl::CollisionObject> obj)
 {
   return collides(manager.get(), obj.get());
 }
 
-bool collides(fcl::CollisionObject* obj,
-                     fcl::BroadPhaseCollisionManager* manager)
+bool collides(::collision::fcl::CollisionObject* obj,
+              ::collision::fcl::BroadPhaseCollisionManager* manager)
 {
   return collides(manager, obj);
 }
 
-bool collides(std::shared_ptr<fcl::CollisionObject> obj,
-                     std::shared_ptr<fcl::BroadPhaseCollisionManager> manager)
+bool collides(std::shared_ptr<::collision::fcl::CollisionObject> obj,
+              std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> manager)
 {
   return collides(manager, obj);
 }
 
-bool collides(fcl::BroadPhaseCollisionManager* a,
-                     fcl::BroadPhaseCollisionManager* b)
+bool collides(::collision::fcl::BroadPhaseCollisionManager* a,
+              ::collision::fcl::BroadPhaseCollisionManager* b)
 {
   CollisionData data;
   a->collide(b, &data, fclCollisionCallback);
   return data.result.isCollision();
 }
 
-bool collides(std::shared_ptr<fcl::BroadPhaseCollisionManager> a,
-              std::shared_ptr<fcl::BroadPhaseCollisionManager> b)
+bool collides(std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> a,
+              std::shared_ptr<::collision::fcl::BroadPhaseCollisionManager> b)
 {
   return collides(a.get(), b.get());
 }

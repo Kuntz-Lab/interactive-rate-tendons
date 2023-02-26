@@ -80,9 +80,7 @@
 #ifndef STL_IO_H
 #define STL_IO_H
 
-#include <fcl/data_types.h>
-#include <fcl/math/vec_3f.h>
-#include <fcl/BVH/BVH_model.h>
+#include <collision/fcl_types.h>
 
 #include <algorithm>
 #include <exception>
@@ -213,12 +211,12 @@ void write_stl_file_binary(const std::string &filename,
                            const TIndexContainer& tris);
 
 inline void write_stl_file_binary(const std::string &filename,
-                           const std::vector<fcl::Vec3f> &coords,
-                           const std::vector<fcl::Triangle> &tris);
+                           const std::vector<::collision::fcl::Vertex> &coords,
+                           const std::vector<::collision::fcl::Triangle> &tris);
 
 template <typename BV>
 void write_stl_file_binary(const std::string &filename,
-                           const fcl::BVHModel<BV> &mesh);
+                           const ::collision::fcl::BVHModel<BV> &mesh);
 
 
 template <class TNumberContainer, class TIndexContainer>
@@ -227,12 +225,12 @@ void write_stl_file_ascii(const std::string &filename,
                           const TIndexContainer& tris);
 
 inline void write_stl_file_ascii(const std::string &filename,
-                          const std::vector<fcl::Vec3f> &coords,
-                          const std::vector<fcl::Triangle> &tris);
+                          const std::vector<::collision::fcl::Vertex> &coords,
+                          const std::vector<::collision::fcl::Triangle> &tris);
 
 template <typename BV>
 void write_stl_file_ascii(const std::string &filename,
-                          const fcl::BVHModel<BV> &mesh);
+                          const ::collision::fcl::BVHModel<BV> &mesh);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -348,20 +346,20 @@ namespace stl_io_impl {
   }
 
   inline std::ostream& print_normal(std::ostream &out,
-                                    const fcl::Vec3f &n)
+                                    const ::collision::fcl::Vertex &n)
   {
     return out << "  facet normal " << n[0] << " " << n[1] << " " << n[2]
                << "\n";
   }
 
   inline std::ostream& print_vertex(std::ostream &out,
-                                    const fcl::Vec3f &v)
+                                    const ::collision::fcl::Vertex &v)
   {
     return out << "      vertex " << v[0] << " " << v[1] << " " << v[2] << "\n";
   }
 
-  inline fcl::Vec3f compute_normal(
-      const fcl::Vec3f &a, const fcl::Vec3f &b, const fcl::Vec3f &c)
+  inline ::collision::fcl::Vertex compute_normal(
+      const ::collision::fcl::Vertex &a, const ::collision::fcl::Vertex &b, const ::collision::fcl::Vertex &c)
   {
     auto normal = (b - a).cross(c - b);
     normal /= normal.norm();
@@ -369,9 +367,9 @@ namespace stl_io_impl {
   }
 
   inline std::ostream& print_triangle(std::ostream &out,
-                                      const fcl::Vec3f &a,
-                                      const fcl::Vec3f &b,
-                                      const fcl::Vec3f &c)
+                                      const ::collision::fcl::Vertex &a,
+                                      const ::collision::fcl::Vertex &b,
+                                      const ::collision::fcl::Vertex &c)
   {
     auto normal = compute_normal(a, b, c);
     stl_io_impl::print_normal(out, normal);
@@ -391,7 +389,7 @@ namespace stl_io_impl {
     std::fwrite(header, sizeof(header[0]), 80, out);
   }
 
-  inline void print_vec_binary(std::FILE* out, const fcl::Vec3f &v) {
+  inline void print_vec_binary(std::FILE* out, const ::collision::fcl::Vertex &v) {
     float val;
     val = static_cast<float>(v[0]);
     std::fwrite(&val, sizeof(float), 1, out);
@@ -402,9 +400,9 @@ namespace stl_io_impl {
   }
 
   inline void print_triangle_binary(std::FILE* out,
-                                    const fcl::Vec3f &a,
-                                    const fcl::Vec3f &b,
-                                    const fcl::Vec3f &c)
+                                    const ::collision::fcl::Vertex &a,
+                                    const ::collision::fcl::Vertex &b,
+                                    const ::collision::fcl::Vertex &c)
   {
     auto normal = compute_normal(a, b, c);
     print_vec_binary(out, normal);
@@ -691,15 +689,15 @@ void write_stl_file_binary(const std::string &filename,
     auto b = &coords[3 * tris[3 * itri + 1]]; // corner 1
     auto c = &coords[3 * tris[3 * itri + 2]]; // corner 2
     stl_io_impl::print_triangle_binary(out.file,
-                                       fcl::Vec3f(a[0], a[1], a[2]),
-                                       fcl::Vec3f(b[0], b[1], b[2]),
-                                       fcl::Vec3f(c[0], c[1], c[2]));
+                                       ::collision::fcl::Vertex(a[0], a[1], a[2]),
+                                       ::collision::fcl::Vertex(b[0], b[1], b[2]),
+                                       ::collision::fcl::Vertex(c[0], c[1], c[2]));
   }
 }
 
 inline void write_stl_file_binary(const std::string &filename,
-                           const std::vector<fcl::Vec3f> &coords,
-                           const std::vector<fcl::Triangle> &tris)
+                           const std::vector<::collision::fcl::Vertex> &coords,
+                           const std::vector<::collision::fcl::Triangle> &tris)
 {
   using stl_io_impl::print_triangle_binary;
 
@@ -718,7 +716,7 @@ inline void write_stl_file_binary(const std::string &filename,
 
 template <typename BV>
 void write_stl_file_binary(const std::string &filename,
-                           const fcl::BVHModel<BV> &mesh)
+                           const ::collision::fcl::BVHModel<BV> &mesh)
 {
   using stl_io_impl::print_triangle_binary;
 
@@ -782,17 +780,17 @@ void write_stl_file_ascii(const std::string &filename,
     auto b = &coords[3 * tris[3 * itri + 1]]; // corner 1
     auto c = &coords[3 * tris[3 * itri + 2]]; // corner 2
     print_triangle(out,
-                   fcl::Vec3f(a[0], a[1], a[2]),
-                   fcl::Vec3f(b[0], b[1], b[2]),
-                   fcl::Vec3f(c[0], c[1], c[2]));
+                   ::collision::fcl::Vertex(a[0], a[1], a[2]),
+                   ::collision::fcl::Vertex(b[0], b[1], b[2]),
+                   ::collision::fcl::Vertex(c[0], c[1], c[2]));
   }
 
   out << "endsolid ASCII\n";
 }
 
 inline void write_stl_file_ascii(const std::string &filename,
-                                 const std::vector<fcl::Vec3f> &coords,
-                                 const std::vector<fcl::Triangle> &tris)
+                                 const std::vector<::collision::fcl::Vertex> &coords,
+                                 const std::vector<::collision::fcl::Triangle> &tris)
 {
   using stl_io_impl::print_triangle;
 
@@ -812,7 +810,7 @@ inline void write_stl_file_ascii(const std::string &filename,
 
 template <typename BV>
 void write_stl_file_ascii(const std::string &filename,
-                          const fcl::BVHModel<BV> &mesh)
+                          const ::collision::fcl::BVHModel<BV> &mesh)
 {
   using stl_io_impl::print_triangle;
 

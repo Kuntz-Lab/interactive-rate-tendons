@@ -1,8 +1,8 @@
 #include "Environment.h"
 #include "cpptoml/cpptoml.h"
 #include "cpptoml/toml_conversions.h"
+#include "collision/fcl_types.h"
 
-#include <fcl/broadphase/broadphase.h>
 
 
 namespace motion_planning {
@@ -243,18 +243,18 @@ void Environment::update_broadphase() const {
   _broadphase->setup();
 }
 
-bool Environment::collides(fcl::CollisionObject *obj) const {
+bool Environment::collides(::collision::fcl::CollisionObject *obj) const {
   check_update();
   return collision::collides(obj, _broadphase.get());
 }
 
-bool Environment::collides(fcl::BroadPhaseCollisionManager* manager) const {
+bool Environment::collides(::collision::fcl::BroadPhaseCollisionManager* manager) const {
   check_update();
   return collision::collides(manager, _broadphase.get());
 }
 
 bool Environment::collides(const collision::CapsuleSequence &caps) const {
-  std::vector<std::shared_ptr<fcl::CollisionObject>> objs;
+  std::vector<std::shared_ptr<::collision::fcl::CollisionObject>> objs;
   CollisionManager manager;
   for (size_t i = 0; i < caps.size(); i++) {
     objs.emplace_back(caps[i].to_fcl_object());
