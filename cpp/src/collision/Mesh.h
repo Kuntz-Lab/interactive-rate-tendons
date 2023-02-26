@@ -1,10 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <fcl/BV/OBBRSS.h>
-#include <fcl/BVH/BVH_model.h>
-#include <fcl/data_types.h>
-#include <fcl/math/vec_3f.h>
+#include <collision/fcl_types.h>
 
 #include <memory>
 #include <string>
@@ -24,8 +21,8 @@ namespace collision {
 // TODO-   pulled instances of it to be updated rather than outdated.
 // TODO: can I just use the FCL type as the storage instead of converting?
 struct Mesh {
-  using Triangle = fcl::Triangle;
-  using Vertex = fcl::Vec3f;
+  using Triangle = ::collision::fcl::Triangle;
+  using Vertex = ::collision::fcl::Vertex;
 
   std::vector<Vertex> vertices;
   std::vector<Triangle> triangles;
@@ -40,7 +37,7 @@ struct Mesh {
   static Mesh from_stl(const std::string &fname);
 
   template <typename BV>
-  static Mesh from_fcl(std::shared_ptr<fcl::BVHModel<BV>> model) {
+  static Mesh from_fcl(std::shared_ptr<::collision::fcl::BVHModel<BV>> model) {
     Mesh mesh;
     mesh.vertices =
         std::vector<Vertex>(model->vertices,
@@ -51,9 +48,9 @@ struct Mesh {
     return mesh;
   }
 
-  template <typename BV=fcl::OBBRSS>
-  std::shared_ptr<fcl::BVHModel<BV>> to_fcl_model() const {
-    auto model = std::make_shared<fcl::BVHModel<BV>>();
+  template <typename BV=::collision::fcl::BV>
+  std::shared_ptr<::collision::fcl::BVHModel<BV>> to_fcl_model() const {
+    auto model = std::make_shared<::collision::fcl::BVHModel<BV>>();
     if (!this->empty()) {
       model->beginModel(triangles.size(), vertices.size());
       model->addSubModel(vertices, triangles);
@@ -71,9 +68,9 @@ struct Mesh {
     return model;
   }
 
-  template <typename BV=fcl::OBBRSS>
-  std::shared_ptr<fcl::CollisionObject> to_fcl_object() const {
-    return std::make_shared<fcl::CollisionObject>(this->to_fcl_model<BV>());
+  template <typename BV=::collision::fcl::BV>
+  std::shared_ptr<::collision::fcl::CollisionObject> to_fcl_object() const {
+    return std::make_shared<::collision::fcl::CollisionObject>(this->to_fcl_model<BV>());
   }
 
   /// Doesn ot compare with filename, just vertices and triangles
@@ -82,7 +79,7 @@ struct Mesh {
     return std::equal(vertices.begin(), vertices.end(),
                       other.vertices.begin(), other.vertices.end(),
                       [](const Vertex &v1, const Vertex &v2) {
-                        return v1.equal(v2);
+                        return v1 == v2;
                       })
         && std::equal(triangles.begin(), triangles.end(),
                       other.triangles.begin(), other.triangles.end(),

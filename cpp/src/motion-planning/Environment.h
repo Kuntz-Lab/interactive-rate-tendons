@@ -7,18 +7,13 @@
 #include <collision/Sphere.h>
 #include <collision/VoxelOctree.h>
 #include <collision/collision.h>
+#include <collision/fcl_types.h>
 
 #include <memory>
 #include <ostream>
 
 namespace cpptoml {
 class table;
-}
-
-namespace fcl {
-  class CollisionObject;
-  class DynamicAABBTreeCollisionManager;
-  class BroadPhaseCollisionManager;
 }
 
 namespace motion_planning {
@@ -29,7 +24,7 @@ public:
   using Sphere           = collision::Sphere;
   using Capsule          = collision::Capsule;
   using Mesh             = collision::Mesh;
-  using CollisionManager = fcl::DynamicAABBTreeCollisionManager;
+  using CollisionManager = ::collision::fcl::DynamicAABBTreeCollisionManager;
 
   const std::vector<Point>&   points()   const { return _points;   }
   const std::vector<Sphere>&  spheres()  const { return _spheres;  }
@@ -91,8 +86,8 @@ public:
     check_update();
   }
 
-  bool collides(fcl::CollisionObject *obj) const;
-  bool collides(fcl::BroadPhaseCollisionManager* manager) const;
+  bool collides(::collision::fcl::CollisionObject *obj) const;
+  bool collides(::collision::fcl::BroadPhaseCollisionManager* manager) const;
   bool collides(const collision::CapsuleSequence &caps) const;
   bool collides(const Environment &other) const;
 
@@ -157,7 +152,7 @@ private:
 
   // Cached collision detection stuff
   mutable bool _dirty = false;  // flag signaling we need to update cache
-  mutable std::vector<std::shared_ptr<fcl::CollisionObject>> _objects;
+  mutable std::vector<std::shared_ptr<::collision::fcl::CollisionObject>> _objects;
   mutable std::shared_ptr<CollisionManager> _broadphase;
 };
 

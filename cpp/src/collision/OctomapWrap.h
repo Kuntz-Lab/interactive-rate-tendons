@@ -1,9 +1,8 @@
 #ifndef OCTOMAP_WRAP_H
 #define OCTOMAP_WRAP_H
 
-#include <fcl/octree.h>
-#include <fcl/collision.h>      // for fcl::collide()
-#include <fcl/collision_data.h> // for fcl::CollisionRe{quest,sult}
+#include <collision/VoxelOctree.h>
+#include <collision/fcl_types.h>
 
 #include <octomap/octomap.h>
 #include <octomap/OcTree.h>
@@ -21,7 +20,7 @@ public:
   explicit OctomapWrap(double resolution)
     : _Nx(1/resolution), _Ny(1/resolution), _Nz(1/resolution)
     , _data(new octomap::OcTree(resolution))
-    , _collision_object(new fcl::OcTree(_data))
+    , _collision_object(new ::collision::fcl::OcTree(_data))
   {
     _data->useBBXLimit(true);
     octomap::point3d min {0.0, 0.0, 0.0};
@@ -36,7 +35,7 @@ public:
           std::min(vtree.dx(),
                    std::min(vtree.dy(),
                             vtree.dz()))))
-    , _collision_object(new fcl::OcTree(_data))
+    , _collision_object(new ::collision::fcl::OcTree(_data))
   {
     _data->useBBXLimit(true);
     auto ll = vtree.lower_left();
@@ -61,7 +60,7 @@ public:
   OctomapWrap(const OctomapWrap &other)
     : _Nx(other._Nx), _Ny(other._Ny), _Nz(other._Nz)
     , _data(new octomap::OcTree(*other._data))
-    , _collision_object(new fcl::OcTree(_data))
+    , _collision_object(new ::collision::fcl::OcTree(_data))
   {
     _collision_object->setUserData(other._collision_object->getUserData());
     //_collision_object->setTransform(other._collision_object->getTransform());
@@ -123,11 +122,11 @@ public:
   }
 
   bool collides(const OctomapWrap &other) const {
-    fcl::CollisionRequest request; // default request
-    fcl::CollisionResult result;
-    fcl::CollisionObject a(_collision_object);
-    fcl::CollisionObject b(other._collision_object);
-    fcl::collide(&a, &b, request, result);
+    ::collision::fcl::CollisionRequest request; // default request
+    ::collision::fcl::CollisionResult result;
+    ::collision::fcl::CollisionObject a(_collision_object);
+    ::collision::fcl::CollisionObject b(other._collision_object);
+    ::fcl::collide(&a, &b, request, result);
     return result.isCollision();
   }
 
@@ -190,7 +189,7 @@ private:
   size_t _Ny = 0;
   size_t _Nz = 0;
   std::shared_ptr<octomap::OcTree> _data;
-  std::shared_ptr<fcl::OcTree> _collision_object;
+  std::shared_ptr<::collision::fcl::OcTree> _collision_object;
 }; // end of class OctomapWrap
 
 } // end of namespace collision

@@ -5,12 +5,13 @@
 #include <collision/Mesh.h>
 #include <collision/Point.h>
 #include <collision/collision_primitives.h> // for interpolate() and closest_t()
-
-#include <fcl/BV/OBBRSS.h>
+#include <collision/fcl_types.h>
 
 #include <iostream>
 #include <memory>
 #include <vector>
+
+
 
 namespace cpptoml {
 class table;
@@ -95,13 +96,13 @@ struct CapsuleSequence {
 
   Mesh to_mesh(unsigned int n_circle_pts = 16, bool add_spherical_caps = true) const;
 
-  template <typename BV=fcl::OBBRSS, typename... Args>
+  template <typename BV=::collision::fcl::BV, typename... Args>
   auto to_fcl_mesh_model(Args&&... args) const {
     Mesh mesh = to_mesh(std::forward<Args>(args)...);
     return mesh.to_fcl_model<BV>();
   }
 
-  template <typename BV=fcl::OBBRSS, typename... Args>
+  template <typename BV=::collision::fcl::BV, typename... Args>
   auto to_fcl_mesh_object(Args&&... args) const {
     Mesh mesh = to_mesh(std::forward<Args>(args)...);
     return mesh.to_fcl_object<BV>();

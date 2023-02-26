@@ -1,9 +1,7 @@
 #include "Sphere.h"
 
+#include "collision/fcl_types.h"
 #include "cpptoml/toml_conversions.h"
-
-#include <fcl/shape/geometric_shapes.h> // for fcl::Sphere
-#include <fcl/math/transform.h> // for Transform3f
 
 namespace collision {
 
@@ -37,16 +35,16 @@ Sphere Sphere::from_toml(std::shared_ptr<cpptoml::table> tbl) {
   return Sphere{cpptoml::to_point(center), r->get()};
 }
 
-std::pair<std::shared_ptr<fcl::Sphere>, fcl::Transform3f>
+std::pair<std::shared_ptr<::collision::fcl::Sphere>, ::collision::fcl::Transform>
 Sphere::to_fcl_model() const
 {
-  auto fcl_sphere = std::make_shared<fcl::Sphere>(r);
-  fcl::Transform3f trans(fcl::Vec3f(c[0], c[1], c[2]));
+  auto fcl_sphere = std::make_shared<::collision::fcl::Sphere>(r);
+  auto trans = ::collision::fcl::mktransform(c);
   return {fcl_sphere, trans};
 }
 
-std::shared_ptr<fcl::CollisionObject> Sphere::to_fcl_object() const {
+std::shared_ptr<::collision::fcl::CollisionObject> Sphere::to_fcl_object() const {
   auto [fcl_sphere, transform] = this->to_fcl_model();
-  return std::make_shared<fcl::CollisionObject>(fcl_sphere, transform);
+  return std::make_shared<::collision::fcl::CollisionObject>(fcl_sphere, transform);
 }
 } // end of namespace collision

@@ -1752,7 +1752,7 @@ void VoxelCachedLazyPRM::precomputeEdgeVoxelCache() {
   {
     #pragma omp single
     for (Edge e : boost::edges(g_)) {
-      #pragma omp task default(none) firstprivate(e) \
+      #pragma omp task firstprivate(e) \
                        shared(edges_to_remove, \
                               n_edges_voxelized, \
                               num_edges)

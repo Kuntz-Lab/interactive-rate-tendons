@@ -6,6 +6,8 @@ set -o pipefail
 set -x
 
 local_port=3322
+image_name=tendon-dev
+container_name=${image_name}
 
 # Per advice from:
 #
@@ -19,13 +21,13 @@ docker run \
   --privileged \
   -v /dev:/dev \
   -v ${HOME}:${HOME} \
-  --name tendon-dev \
+  --name ${container_name} \
   --detach \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   --cap-add=SYS_PTRACE \
   --security-opt seccomp=unconfined \
   --publish ${local_port}:22 \
-  tendon-dev
+  ${image_name}
 
 set +x
 echo
@@ -35,9 +37,9 @@ echo "or simply"
 echo "    ssh -p ${local_port} localhost"
 echo
 echo "when you're done, do"
-echo "    docker stop ros2-dev"
+echo "    docker stop ${container_name}"
 echo "to start again, call"
-echo "    docker start ros2-dev"
+echo "    docker start ${container_name}"
 echo "then connect with ssh."
 echo
 

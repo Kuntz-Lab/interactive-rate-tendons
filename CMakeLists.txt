@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(tendon_experiments LANGUAGES CXX VERSION 1.0.0)
+project(tendon_experiments LANGUAGES C CXX VERSION 1.0.0)
 
 option(TENDON_USE_OPENMP "Use OpenMP" ON)
 option(TENDON_LINK_PYTHON_SCRIPTS "Link python scripts instead of copying" ON)
@@ -27,7 +27,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(octomap REQUIRED)
 find_package(ompl REQUIRED)
-find_package(fcl 0.5 EXACT REQUIRED)
+find_package(fcl 0.5.0 REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system filesystem iostreams graph)
 find_package(ITK REQUIRED)
 find_package(Qt5 COMPONENTS Core SerialPort REQUIRED)
@@ -213,6 +213,7 @@ set(COLLISION_HEADERS
   ${SRC_DIR}/collision/collision_primitives.h
   ${SRC_DIR}/collision/detail/TreeNode.h
   ${SRC_DIR}/collision/detail/TreeNode.hxx
+  ${SRC_DIR}/collision/fcl_types.h
   ${SRC_DIR}/collision/stl_io.h
   )
 install(FILES ${COLLISION_HEADERS} DESTINATION include/collision)
@@ -313,7 +314,7 @@ target_include_directories(tendon PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}/include # for config.h
   ${THIRD_PARTY_DIR}
   ${EIGEN3_INCLUDE_DIRS}
-  ${FCL_INCLUDE_DIRS}
+  #${FCL_INCLUDE_DIRS}
   ${ITK_INCLUDE_DIRS}
   ${OCTOMAP_INCLUDE_DIRS}
   ${OMPL_INCLUDE_DIRS}
@@ -321,10 +322,11 @@ target_include_directories(tendon PUBLIC
 set_property(TARGET tendon PROPERTY CXX_STANDARD 17)
 target_include_directories(tendon PUBLIC ${SRC_DIR})
 target_link_libraries(tendon
-  ${FCL_LIBRARIES}
+  #${FCL_LIBRARIES}
   ${ITK_LIBRARIES}
   ${OCTOMAP_LIBRARIES}
   ${OMPL_LIBRARIES}
+  fcl
   Boost::filesystem
   Boost::iostreams
   Boost::system
