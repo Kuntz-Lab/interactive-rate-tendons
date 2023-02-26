@@ -1752,11 +1752,10 @@ void VoxelCachedLazyPRM::precomputeEdgeVoxelCache() {
   {
     #pragma omp single
     for (Edge e : boost::edges(g_)) {
-      #pragma omp task default(none) firstprivate(e) \
+      #pragma omp task firstprivate(e) \
                        shared(edges_to_remove, \
                               n_edges_voxelized, \
-                              num_edges, \
-                              ereport_n)
+                              num_edges)
       {
         bool is_valid_shape = voxelizeEdge(e); // this is the slow part
         #pragma omp critical // this should just be fast stuff

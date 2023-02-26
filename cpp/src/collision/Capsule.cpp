@@ -50,11 +50,7 @@ Capsule::to_fcl_model() const
   auto length = direction.norm();
   auto capsule = std::make_shared<::collision::fcl::Capsule>(this->r, length);
   auto e_quat = util::quat_from_zaxis(direction);
-  auto transform = ::collision::fcl::mktransform(
-  //::collision::fcl::Transform transform(
-      ::collision::fcl::Quaternion(e_quat.w(), e_quat.x(), e_quat.y(), e_quat.z()),
-      ::collision::fcl::Vertex(center[0], center[1], center[2])
-      );
+  auto transform = ::collision::fcl::mktransform(e_quat, center);
   return {capsule, transform};
 }
 
