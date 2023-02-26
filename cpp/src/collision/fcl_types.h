@@ -18,7 +18,7 @@
 #  include <fcl/octree.h>
 #  include <fcl/shape/geometric_shape_to_BVH_model.h>
 #  include <fcl/shape/geometric_shapes.h>
-#elif FCL_MINOR_VERSION == 6
+#else
 #  include <fcl/broadphase/broadphase_collision_manager.h>
 #  include <fcl/broadphase/broadphase_dynamic_AABB_tree.h>
 #  include <fcl/common/types.h>  // for fcl::Vector3<S>
@@ -31,8 +31,6 @@
 #  include <fcl/math/triangle.h>
 #  include <fcl/narrowphase/collision.h> // for fcl::collide()
 #  include <fcl/narrowphase/collision_object.h>
-#else
-#  error "Unsupported FCL version"
 #endif
 
 
@@ -73,7 +71,7 @@ namespace collision {
       return Transform{Vertex{v[0], v[1], v[2]}};
     }
 
-#elif FCL_MINOR_VERSION == 6
+#else // FCL_MINOR_VERSION > 5
 
     using FloatType = double;
 
@@ -103,7 +101,7 @@ namespace collision {
       return t;
     }
 
-#endif
+#endif // FCL_MINOR_VERSION
 
   } // end of namespace collision::fcl
 } // end of namespace collision

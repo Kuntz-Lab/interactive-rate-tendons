@@ -17,7 +17,7 @@ class InteractiveRateTendons(ConanFile):
     requires = (
         'octomap/[>=1.0 <2]',
         'pybind11/[>=2.0 <3]',
-        'fcl/[>=0.6 <0.7]',
+        'fcl/[>=0.5 <0.8]',
         'libccd/[>=2.0 <3.0]',
         #'itk/[>=5.0.0 <6]',
         )
