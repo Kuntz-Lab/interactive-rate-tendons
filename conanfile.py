@@ -19,7 +19,16 @@ class InteractiveRateTendons(ConanFile):
         'pybind11/[>=2.0 <3]',
         'fcl/[>=0.5 <0.8]',
         'libccd/[>=2.0 <3.0]',
+        'boost/[>=1.65]',
+        'eigen/[>=3.0 <4]',
+        'gtest/[>=1.0 <2]',
+        # Broken conan packages
         #'itk/[>=5.0.0 <6]',
+        #'qt/[>=5.0 <6]',
+        #'readline/[>=7.0]',
+        )
+    build_requires = (
+        'cmake/[>=3.5 <4]',
         )
     generators = (
         'CMakeDeps',
